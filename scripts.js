@@ -15,11 +15,15 @@ function getDate() {
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
-
+function sleep(ms) {
+    const start = new Date().getTime();
+    while (new Date().getTime() - start < ms);
+}
 var user = {
     hits: 0,
     hit: [],
     performance: [],
+    progress: [],
     attempts: 0,
     start: false,
     beforeDate: getDate(),
@@ -43,6 +47,7 @@ if (localStorage.getItem("user") != null) {
             hits: 0,
             hit: [],
             performance: [],
+            progress: [],
             attempts: 0,
             start: false,
             beforeDate: getDate(),
@@ -56,6 +61,13 @@ if (localStorage.getItem("user") != null) {
         if (user.start) {
             document.getElementById("start").style.color = "gray";
             document.getElementById("start").style.cursor = "default";
+
+            if (user.hits == 8) {
+                setTimeout(() => {
+                    document.getElementById("share-container").style.display = "flex";
+                }, 2000);
+                document.getElementById("share").innerHTML = `${user.progress.join("")}`;
+            }
         }
 
         document.getElementById("attempt").innerHTML = `Tentativas: ${user.attempts}`;
@@ -70,6 +82,9 @@ document.querySelectorAll(".item .flipper .back").forEach((item, number) => {
     item.style.backgroundImage = "url(" + value + ".webp)";
     item.id = number;
 
+    if (user.hit.includes(parseInt(item.id))) {
+        item.parentNode.classList.add("hits");
+    }
 });
 
 let par = [];
@@ -89,7 +104,7 @@ document.querySelectorAll(".flipper").forEach((item, number) => {
 
     item.addEventListener("click", () => {
 
-        if (!item.querySelector(".back").classList.contains("hits")) {
+        if (!item.classList.contains("hits")) {
 
             item.classList.toggle("select");
 
@@ -106,43 +121,51 @@ document.querySelectorAll(".flipper").forEach((item, number) => {
                 updateData();
                 document.querySelectorAll(".flipper").forEach((item, number) => {
                     if (par.includes(number)) {
-                        console.log( document.getElementById(par[0]));
-                        console.log( document.getElementById(par[1]));
                         document.getElementById(par[0]).parentNode.classList.add('flip');
                         document.getElementById(par[1]).parentNode.classList.add('flip');
 
                         if (user.today[par[0]] == user.today[par[1]]) {
 
                             if (!pass) {
-                                (async function () {
-                                    
-                                    await new Promise(resolve => setTimeout(resolve, 500));
-                                    document.getElementById(par[0]).style.transform = "none";
-                                    document.getElementById(par[1]).style.transform = "none";
-                                    
-                                    item.classList.remove("flip");
-                                    item.classList.add("hits");                 
-                                    debugger
-
-                                })();
                                 user.hits++;
-                                user.hit.push([par[0], par[1]]);
+                                user.progress.push('🟢');
+                                    (async function (par) {
+                                        await new Promise(resolve => setTimeout(resolve, 500));
+
+                                        document.getElementById(par[0]).classList.remove("flip");
+                                        document.getElementById(par[1]).classList.remove("flip");
+
+                                        document.getElementById(par[0]).parentNode.classList.add("hits");
+                                        document.getElementById(par[1]).parentNode.classList.add("hits");
+                                    })(par);
+
+                               
+                                user.hit.push(par[0], par[1]);
                                 updateData();
 
                                 pass = true;
                             }
                         }
                         else {
-                            (async function () {
-                                await new Promise(resolve => setTimeout(resolve, 500));
-                                item.classList.remove("flip");
-                            })();
+                            user.progress.push('❌');
+                                (async function () {
+                                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                                    item.classList.remove("flip");
+                                })();
                         }
                         item.classList.remove("select");
                     }
                 })
                 par = [];
             }
+        }
+
+        if (user.hits == 8) {
+            setTimeout(() => {
+                document.getElementById("share-container").style.display = "flex";
+            }, 2000);
+            document.getElementById("share").innerHTML = `${user.progress.join("")}`;
         }
     })
 })
@@ -155,18 +178,44 @@ document.getElementById("start").addEventListener("click", () => {
                 item.classList.add("flip");
             });
 
-            // Aguarde 1 segundo antes de remover a classe "flip" dos elementos
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // Remove a classe "flip" de todos os elementos
             document.querySelectorAll(".item .flipper").forEach((item) => {
                 item.classList.remove("flip");
             });
         })();
         user.start = true;
         updateData();
+        document.querySelectorAll(".item .flipper .back").forEach((item, number) => {
+            item.parentNode.classList.remove("hits");
+
+        });
 
         document.getElementById("start").style.color = "gray";
         document.getElementById("start").style.cursor = "default";
     }
 })
+
+document.getElementById('button').addEventListener('click', clipboardCopy);
+async function clipboardCopy() {
+    let text = "Joguei Conexão Paranormal(Memórias) e consegui em " + user.attempts + " tentativas:\n" + user.progress.join("") + "\nPara jogar acesse:\nconexaoopmemorias.vercel.app";
+    await navigator.clipboard.writeText(text);
+
+    document.getElementById("copy").style.display = "unset";
+
+    setTimeout(() => {
+        document.getElementById("copy").style.display = "none";
+    }, 1000);
+}
+
+let back = document.getElementById("back");
+let modal = document.getElementById("modal-screen");
+
+back.addEventListener('click', () => {
+    modal.style.display = "none";
+})
+
+document.getElementById("about").addEventListener('click', () => {
+    modal.style.display = "flex";
+})
+
