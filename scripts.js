@@ -63,9 +63,9 @@ if (localStorage.getItem("user") != null) {
             document.getElementById("start").style.cursor = "default";
 
             if (user.hits == 8) {
-                setTimeout(() => {
-                    document.getElementById("share-container").style.display = "flex";
-                }, 2000);
+
+                document.getElementById("share-container").style.display = "flex";
+
                 document.getElementById("share").innerHTML = `${user.progress.join("")}`;
             }
         }
@@ -129,17 +129,17 @@ document.querySelectorAll(".flipper").forEach((item, number) => {
                             if (!pass) {
                                 user.hits++;
                                 user.progress.push('🟢');
-                                    (async function (par) {
-                                        await new Promise(resolve => setTimeout(resolve, 500));
+                                (async function (par) {
+                                    await new Promise(resolve => setTimeout(resolve, 500));
 
-                                        document.getElementById(par[0]).classList.remove("flip");
-                                        document.getElementById(par[1]).classList.remove("flip");
+                                    document.getElementById(par[0]).classList.remove("flip");
+                                    document.getElementById(par[1]).classList.remove("flip");
 
-                                        document.getElementById(par[0]).parentNode.classList.add("hits");
-                                        document.getElementById(par[1]).parentNode.classList.add("hits");
-                                    })(par);
+                                    document.getElementById(par[0]).parentNode.classList.add("hits");
+                                    document.getElementById(par[1]).parentNode.classList.add("hits");
+                                })(par);
 
-                               
+
                                 user.hit.push(par[0], par[1]);
                                 updateData();
 
@@ -148,11 +148,11 @@ document.querySelectorAll(".flipper").forEach((item, number) => {
                         }
                         else {
                             user.progress.push('❌');
-                                (async function () {
-                                    await new Promise(resolve => setTimeout(resolve, 500));
+                            (async function () {
+                                await new Promise(resolve => setTimeout(resolve, 500));
 
-                                    item.classList.remove("flip");
-                                })();
+                                item.classList.remove("flip");
+                            })();
                         }
                         item.classList.remove("select");
                     }
@@ -162,9 +162,9 @@ document.querySelectorAll(".flipper").forEach((item, number) => {
         }
 
         if (user.hits == 8) {
-            setTimeout(() => {
-                document.getElementById("share-container").style.display = "flex";
-            }, 2000);
+
+            document.getElementById("share-container").style.display = "flex";
+
             document.getElementById("share").innerHTML = `${user.progress.join("")}`;
         }
     })
