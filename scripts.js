@@ -198,7 +198,7 @@ document.getElementById("start").addEventListener("click", () => {
 
 document.getElementById('button').addEventListener('click', clipboardCopy);
 async function clipboardCopy() {
-    let text = "Joguei Conexão Paranormal(Memórias) e consegui em " + user.attempts + " tentativas:\n" + user.progress.join("") + "\nPara jogar acesse:\nconexaoopmemorias.vercel.app";
+    let text = "Joguei Memória Paranormal e consegui em " + user.attempts + " tentativas:\n" + user.progress.join("") + "\nPara jogar acesse:\nconexaoopmemorias.vercel.app";
     await navigator.clipboard.writeText(text);
 
     document.getElementById("copy").style.display = "unset";
