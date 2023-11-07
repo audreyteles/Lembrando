@@ -417,9 +417,9 @@ ul {
 
 #back {
     position: absolute;
-    height: 100vh;
+    height: 120vh;
     background-color: rgba(0, 0, 0, .5);
-    width: 100vw;
+    width: 120vw;
 }
 
 .result li {
